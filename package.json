@@ -1,0 +1,45 @@
+{
+  "name": "automation-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "playwright test",
+    "test:dev": "cross-env TEST_ENV=dev playwright test",
+    "test:qa": "cross-env TEST_ENV=qa playwright test",
+    "headed": "cross-env TEST_ENV=qa playwright test --headed",
+    "debug": "cross-env TEST_ENV=qa playwright test --debug",
+    "smoke": "cross-env TEST_ENV=qa playwright test tests/smoke",
+    "auth": "cross-env TEST_ENV=qa playwright test tests/auth",
+    "products": "cross-env TEST_ENV=qa playwright test tests/products",
+    "cart": "cross-env TEST_ENV=qa playwright test tests/cart",
+    "checkout": "cross-env TEST_ENV=qa playwright test tests/checkout",
+    "contact": "cross-env TEST_ENV=qa playwright test tests/contact",
+    "subscription": "cross-env TEST_ENV=qa playwright test tests/subscription",
+    "ui": "cross-env TEST_ENV=qa playwright test tests/ui",
+    "e2e": "cross-env TEST_ENV=qa playwright test tests/e2e",
+    "login": "cross-env TEST_ENV=qa playwright test tests/auth/login.spec.js",
+    "signup": "cross-env TEST_ENV=qa playwright test tests/auth/signup.spec.js",
+    "logout": "cross-env TEST_ENV=qa playwright test tests/auth/logout.spec.js",
+    "deleteAccount": "cross-env TEST_ENV=qa playwright test tests/auth/deleteAccount.spec.js",
+    "partial": "playwright test --config=playwright.config.partial.js",
+    "full": "playwright test --config=playwright.config.fully.js",
+    "partial1": "playwright test --project=launch --project=signup --project=signupdetails --project=login --project=remaining-tests --project=delete-account",
+    "report": "allure generate allure-results --clean",
+    "open-report": "allure open",
+    "report-ui": "allure generate allure-results --clean && allure open"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "allure-commandline": "^2.41.0",
+    "allure-playwright": "^3.9.0",
+    "cross-env": "^10.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
