@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main',
+                git branch: 'feature/playwright-framework',
                 url: 'https://github.com/deeksharajput6073-a11y/Playwright-Automation.git'
             }
         }
