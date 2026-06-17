@@ -27,7 +27,10 @@ module.exports = defineConfig({
         baseURL: process.env.BASE_URL,
         headless: false,
         screenshot: 'only-on-failure',
-        video: 'retain-on-failure'
+        video: 'retain-on-failure',
+        actionTimeout: 30000,
+        navigationTimeout: 60000,
+        headless: true
     },
 
     projects: [

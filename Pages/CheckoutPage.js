@@ -9,9 +9,9 @@ class CheckoutPage extends BasePage {
         this.addToCartBtn = page.locator("a[data-product-id='1']").first();
         this.continueShoppingBtn = page.getByRole('button', { name: 'Continue Shopping' });
         this.cartBtn = page.locator("a[href='/view_cart']").first();
-        this.proceedToCheckoutBtn = page.getByRole('link', { name: 'Proceed To Checkout' });
+        this.proceedToCheckoutBtn = page.locator("a:has-text('Proceed To Checkout'), button:has-text('Proceed To Checkout')");
         this.commentBox = page.locator("textarea[name='message']");
-        this.placeOrderBtn = page.getByRole('link', { name: 'Place Order' });
+        this.placeOrderBtn = page.locator("a:has-text('Place Order'), button:has-text('Place Order')");
         this.addressDetails = page.locator('#address_delivery');
     }
 
@@ -22,10 +22,18 @@ class CheckoutPage extends BasePage {
 
     async goToCart() {
         await this.click(this.cartBtn);
+        await this.page.waitForURL('**/view_cart');
     }
 
     async proceedToCheckout() {
-        await this.click(this.proceedToCheckoutBtn);
+        await this.page.waitForLoadState('networkidle');
+
+        await this.proceedToCheckoutBtn.waitFor({
+            state: 'visible',
+            timeout: 30000
+        });
+
+        await this.proceedToCheckoutBtn.click();
     }
 
     async verifyAddressVisible() {

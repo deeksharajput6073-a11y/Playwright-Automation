@@ -2,6 +2,7 @@ class BasePage {
 
     constructor(page) {
         this.page = page;
+        this.page.setDefaultTimeout(30000);
     }
 
     async launchURL() {
