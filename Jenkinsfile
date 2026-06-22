@@ -38,6 +38,7 @@ pipeline {
 
         always {
 
+            // Publish Playwright Report
             publishHTML([
                 allowMissing: true,
                 alwaysLinkToLastBuild: true,
@@ -47,11 +48,15 @@ pipeline {
                 reportName: 'Playwright Report'
             ])
 
+            // Publish Allure Report
             allure([
                 includeProperties: false,
                 jdk: '',
                 results: [[path: 'allure-results']]
             ])
+
+            // Zip the Allure report
+            bat 'powershell Compress-Archive -Path allure-report\\* -DestinationPath allure-report.zip -Force'
 
             // Send Email
             emailext(
@@ -72,11 +77,16 @@ Build Status: ${currentBuild.currentResult}
 
 Build URL: ${BUILD_URL}
 
+Allure Report:
+${BUILD_URL}allure/
+
 Regards,
 Jenkins
 """,
 
-                mimeType: 'text/plain'
+                mimeType: 'text/plain',
+
+                attachmentsPattern: 'allure-report.zip'
             )
         }
     }
