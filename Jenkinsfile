@@ -60,11 +60,11 @@ pipeline {
 
             // Send Email
             emailext(
-                to: 'deeksharajput6073@gmail.com',
+    to: 'deeksharajput6073@gmail.com',
 
-                subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
+    subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
 
-                body: """
+    body: """
 Hello Team,
 
 Automation execution completed.
@@ -75,7 +75,11 @@ Build Number: ${BUILD_NUMBER}
 
 Build Status: ${currentBuild.currentResult}
 
-Build URL: ${BUILD_URL}
+Jenkins Build:
+${BUILD_URL}
+
+Playwright Report:
+${BUILD_URL}Playwright_Report/
 
 Allure Report:
 ${BUILD_URL}allure/
@@ -84,10 +88,8 @@ Regards,
 Jenkins
 """,
 
-                mimeType: 'text/plain',
-
-                attachmentsPattern: 'allure-report.zip'
-            )
+    mimeType: 'text/plain'
+)
         }
     }
 }
