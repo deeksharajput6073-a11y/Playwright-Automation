@@ -55,6 +55,14 @@ pipeline {
                 results: [[path: 'allure-results']]
             ])
 
+            // Create Allure ZIP file
+            bat '''
+            powershell -Command "Compress-Archive -Path '.\\allure-report\\*' -DestinationPath '.\\allure-report.zip' -Force"
+            '''
+
+            // Verify file exists
+            bat 'dir'
+
             // Send Email
             emailext(
 
@@ -63,6 +71,8 @@ pipeline {
                 subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
 
                 mimeType: 'text/html',
+
+                attachmentsPattern: '**/allure-report.zip',
 
                 body: """
                 <h3>Automation Execution Completed</h3>
