@@ -66,42 +66,33 @@ pipeline {
             // Send Email
             emailext(
 
-                to: 'deeksharajput6073@gmail.com',
+    to: 'deeksharajput6073@gmail.com',
 
-                subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
+    subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
 
-                mimeType: 'text/html',
+    mimeType: 'text/html',
 
-                attachmentsPattern: '**/allure-report.zip',
+    body: """
+    <h3>Automation Execution Completed</h3>
 
-                body: """
-                <h3>Automation Execution Completed</h3>
+    <p><b>Job Name:</b> ${JOB_NAME}</p>
 
-                <p><b>Job Name:</b> ${JOB_NAME}</p>
+    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
 
-                <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+    <p><b>Status:</b> ${currentBuild.currentResult}</p>
 
-                <p><b>Build Status:</b> ${currentBuild.currentResult}</p>
+    <a href="${BUILD_URL}allure/">Open Allure Report</a>
 
-                <p><b>Jenkins Build:</b></p>
-                <a href="${BUILD_URL}">${BUILD_URL}</a>
+    <br><br>
 
-                <p><b>Playwright Report:</b></p>
-                <a href="${BUILD_URL}Playwright_20Report/">
-                Open Playwright Report
-                </a>
+    Regards,<br>
+    Jenkins
+    """,
 
-                <p><b>Allure Report:</b></p>
-                <a href="${BUILD_URL}allure/">
-                Open Allure Report
-                </a>
+    attachmentsPattern: 'allure-report.zip',
 
-                <br>
-
-                Regards,<br>
-                Jenkins
-                """
-            )
+    attachLog: true
+)
         }
     }
 }
