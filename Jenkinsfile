@@ -11,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'feature/playwright-framework',
-                url: 'https://github.com/deeksharajput6073-a11y/Playwright-Automation.git'
+                    url: 'https://github.com/deeksharajput6073-a11y/Playwright-Automation.git'
             }
         }
 
@@ -32,10 +32,15 @@ pipeline {
                 bat 'npm run test:qa'
             }
         }
+
+        stage('Generate Allure Report') {
+            steps {
+                bat 'allure generate allure-results --clean -o allure-report'
+            }
+        }
     }
 
     post {
-
         always {
 
             // Publish Playwright Report
@@ -48,51 +53,64 @@ pipeline {
                 reportName: 'Playwright Report'
             ])
 
-            // Publish Allure Report
+            // Publish Allure Report in Jenkins
             allure([
                 includeProperties: false,
                 jdk: '',
                 results: [[path: 'allure-results']]
             ])
 
-            // Create Allure ZIP file
+            // Zip Allure Report
             bat '''
-            powershell -Command "Compress-Archive -Path '.\\allure-report\\*' -DestinationPath '.\\allure-report.zip' -Force"
+            powershell -Command "if (Test-Path '.\\allure-report') { Compress-Archive -Path '.\\allure-report\\*' -DestinationPath '.\\allure-report.zip' -Force }"
             '''
 
-            // Verify file exists
+            // Verify ZIP exists
             bat 'dir'
 
             // Send Email
             emailext(
+                to: 'deeksharajput6073@gmail.com',
+                subject: "Playwright Automation Report - Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
+                mimeType: 'text/html',
+                body: """
+                <html>
+                <body>
+                    <h2>Playwright Automation Execution Report</h2>
 
-    to: 'deeksharajput6073@gmail.com',
+                    <p><b>Job Name:</b> ${JOB_NAME}</p>
+                    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+                    <p><b>Build Status:</b> ${currentBuild.currentResult}</p>
 
-    subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
+                    <p>
+                        <a href="${BUILD_URL}">
+                            Open Jenkins Build
+                        </a>
+                    </p>
 
-    mimeType: 'text/html',
+                    <p>
+                        <a href="${BUILD_URL}allure/">
+                            Open Allure Report
+                        </a>
+                    </p>
 
-    body: """
-    <h3>Automation Execution Completed</h3>
+                    <p>
+                        <a href="${BUILD_URL}Playwright_20Report/">
+                            Open Playwright Report
+                        </a>
+                    </p>
 
-    <p><b>Job Name:</b> ${JOB_NAME}</p>
+                    <br/>
+                    <p>Allure report ZIP is attached with this email.</p>
 
-    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
-
-    <p><b>Status:</b> ${currentBuild.currentResult}</p>
-
-    <a href="${BUILD_URL}allure/">Open Allure Report</a>
-
-    <br><br>
-
-    Regards,<br>
-    Jenkins
-    """,
-
-    attachmentsPattern: 'allure-report.zip',
-
-    attachLog: true
-)
+                    <br/>
+                    <p>Regards,<br/>Jenkins CI/CD</p>
+                </body>
+                </html>
+                """,
+                attachmentsPattern: 'allure-report.zip',
+                attachLog: true
+            )
         }
     }
 }
