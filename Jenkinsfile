@@ -35,72 +35,58 @@ pipeline {
     }
 
     post {
-    always {
+        always {
 
-        // Publish Playwright Report
-        publishHTML([
-            allowMissing: true,
-            alwaysLinkToLastBuild: true,
-            keepAll: true,
-            reportDir: 'playwright-report',
-            reportFiles: 'index.html',
-            reportName: 'Playwright Report'
-        ])
+            // Publish Playwright Report
+            publishHTML([
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'playwright-report',
+                reportFiles: 'index.html',
+                reportName: 'Playwright Report'
+            ])
 
-        // Publish Allure Report
-        allure([
-            includeProperties: false,
-            jdk: '',
-            results: [[path: 'allure-results']]
-        ])
+            // Publish Allure Report
+            allure([
+                includeProperties: false,
+                jdk: '',
+                results: [[path: 'allure-results']]
+            ])
 
-        script {
-            try {
-                emailext(
-                    to: 'deeksharajput6073@gmail.com',
-                    from: 'deeksharajput6073@gmail.com',
-                    replyTo: 'deeksharajput6073@gmail.com',
-                    subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
-                    mimeType: 'text/html',
-                    body: """
-                    <html>
-                    <body>
-                        <h2>Playwright Automation Execution Report</h2>
+            script {
+                try {
 
-                        <p><b>Job Name:</b> ${JOB_NAME}</p>
-                        <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
-                        <p><b>Status:</b> ${currentBuild.currentResult}</p>
+                    mail(
+                        to: 'deeksharajput6073@gmail.com',
+                        subject: "Playwright Automation Report - Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
+                        body: """
+Job Name: ${JOB_NAME}
 
-                        <p>
-                            <a href="${BUILD_URL}">
-                                Open Jenkins Build
-                            </a>
-                        </p>
+Build Number: ${BUILD_NUMBER}
 
-                        <p>
-                            <a href="${BUILD_URL}allure/">
-                                Open Allure Report
-                            </a>
-                        </p>
+Build Status: ${currentBuild.currentResult}
 
-                        <p>
-                            <a href="${BUILD_URL}Playwright_20Report/">
-                                Open Playwright Report
-                            </a>
-                        </p>
+Build URL:
+${BUILD_URL}
 
-                    </body>
-                    </html>
-                    """
-                )
+Allure Report:
+${BUILD_URL}allure/
 
-                echo "EMAIL SENT SUCCESSFULLY"
+Playwright Report:
+${BUILD_URL}Playwright_20Report/
 
-            } catch (Exception e) {
-                echo "EMAIL FAILED: ${e}"
+Regards,
+Jenkins CI/CD
+"""
+                    )
+
+                    echo 'MAILER PLUGIN EMAIL SENT SUCCESSFULLY'
+
+                } catch (Exception e) {
+                    echo "MAILER PLUGIN EMAIL FAILED: ${e.getMessage()}"
+                }
             }
         }
     }
-}
-
 }
