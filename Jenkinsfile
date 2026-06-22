@@ -55,41 +55,43 @@ pipeline {
                 results: [[path: 'allure-results']]
             ])
 
-            // Zip the Allure report
-            bat 'powershell Compress-Archive -Path allure-report\\* -DestinationPath allure-report.zip -Force'
-
             // Send Email
             emailext(
-    to: 'deeksharajput6073@gmail.com',
 
-    subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
+                to: 'deeksharajput6073@gmail.com',
 
-    body: """
-Hello Team,
+                subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
 
-Automation execution completed.
+                mimeType: 'text/html',
 
-Job Name: ${JOB_NAME}
+                body: """
+                <h3>Automation Execution Completed</h3>
 
-Build Number: ${BUILD_NUMBER}
+                <p><b>Job Name:</b> ${JOB_NAME}</p>
 
-Build Status: ${currentBuild.currentResult}
+                <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
 
-Jenkins Build:
-${BUILD_URL}
+                <p><b>Build Status:</b> ${currentBuild.currentResult}</p>
 
-Playwright Report:
-${BUILD_URL}Playwright_Report/
+                <p><b>Jenkins Build:</b></p>
+                <a href="${BUILD_URL}">${BUILD_URL}</a>
 
-Allure Report:
-${BUILD_URL}allure/
+                <p><b>Playwright Report:</b></p>
+                <a href="${BUILD_URL}Playwright_20Report/">
+                Open Playwright Report
+                </a>
 
-Regards,
-Jenkins
-""",
+                <p><b>Allure Report:</b></p>
+                <a href="${BUILD_URL}allure/">
+                Open Allure Report
+                </a>
 
-    mimeType: 'text/plain'
-)
+                <br>
+
+                Regards,<br>
+                Jenkins
+                """
+            )
         }
     }
 }
