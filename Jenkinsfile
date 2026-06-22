@@ -32,12 +32,6 @@ pipeline {
                 bat 'npm run test:qa'
             }
         }
-
-        stage('Generate Allure Report') {
-            steps {
-                bat 'allure generate allure-results --clean -o allure-report'
-            }
-        }
     }
 
     post {
@@ -53,60 +47,53 @@ pipeline {
                 reportName: 'Playwright Report'
             ])
 
-            // Publish Allure Report in Jenkins
+            // Publish Allure Report
             allure([
                 includeProperties: false,
                 jdk: '',
                 results: [[path: 'allure-results']]
             ])
 
-            // Zip Allure Report
-            bat '''
-            powershell -Command "if (Test-Path '.\\allure-report') { Compress-Archive -Path '.\\allure-report\\*' -DestinationPath '.\\allure-report.zip' -Force }"
-            '''
+            // Send Email
+            emailext(
+                to: 'deeksharajput6073@gmail.com',
+                subject: "Playwright Automation Report - Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
+                mimeType: 'text/html',
+                attachLog: true,
+                body: """
+                <html>
+                <body>
+                    <h2>Playwright Automation Execution Report</h2>
 
-            // Verify ZIP exists
-            bat 'dir'
+                    <p><b>Job Name:</b> ${JOB_NAME}</p>
+                    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+                    <p><b>Build Status:</b> ${currentBuild.currentResult}</p>
 
-           // Send Email
-emailext(
-    to: 'deeksharajput6073@gmail.com',
-    subject: "Playwright Automation Report - Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
-    mimeType: 'text/html',
-    attachLog: true,
-    body: """
-    <html>
-    <body>
-        <h2>Playwright Automation Execution Report</h2>
+                    <p>
+                        <a href="${BUILD_URL}">
+                            Open Jenkins Build
+                        </a>
+                    </p>
 
-        <p><b>Job Name:</b> ${JOB_NAME}</p>
-        <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
-        <p><b>Build Status:</b> ${currentBuild.currentResult}</p>
+                    <p>
+                        <a href="${BUILD_URL}allure/">
+                            Open Allure Report
+                        </a>
+                    </p>
 
-        <p>
-            <a href="${BUILD_URL}">
-                Open Jenkins Build
-            </a>
-        </p>
+                    <p>
+                        <a href="${BUILD_URL}Playwright_20Report/">
+                            Open Playwright Report
+                        </a>
+                    </p>
 
-        <p>
-            <a href="${BUILD_URL}allure/">
-                Open Allure Report
-            </a>
-        </p>
+                    <br/>
+                    <p>Regards,<br/>Jenkins CI/CD</p>
 
-        <p>
-            <a href="${BUILD_URL}Playwright_20Report/">
-                Open Playwright Report
-            </a>
-        </p>
-
-        <br/>
-        <p>Regards,<br/>Jenkins CI/CD</p>
-    </body>
-    </html>
-    """
-)
+                </body>
+                </html>
+                """
+            )
         }
     }
 }
