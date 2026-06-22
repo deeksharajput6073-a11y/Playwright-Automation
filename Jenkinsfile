@@ -68,49 +68,42 @@ pipeline {
             // Verify ZIP exists
             bat 'dir'
 
-            // Send Email
-            emailext(
-                to: 'deeksharajput6073@gmail.com',
-                subject: "Playwright Automation Report - Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
-                mimeType: 'text/html',
-                body: """
-                <html>
-                <body>
-                    <h2>Playwright Automation Execution Report</h2>
+           // Send Email
+emailext(
+    to: 'deeksharajput6073@gmail.com',
+    subject: "Playwright Automation Report - Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
+    mimeType: 'text/html',
+    attachLog: true,
+    body: """
+    <html>
+    <body>
+        <h2>Playwright Automation Execution Report</h2>
 
-                    <p><b>Job Name:</b> ${JOB_NAME}</p>
-                    <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
-                    <p><b>Build Status:</b> ${currentBuild.currentResult}</p>
+        <p><b>Job Name:</b> ${JOB_NAME}</p>
+        <p><b>Build Number:</b> ${BUILD_NUMBER}</p>
+        <p><b>Build Status:</b> ${currentBuild.currentResult}</p>
 
-                    <p>
-                        <a href="${BUILD_URL}">
-                            Open Jenkins Build
-                        </a>
-                    </p>
+        <p>
+            <a href="${BUILD_URL}">
+                Open Jenkins Build
+            </a>
+        </p>
 
-                    <p>
-                        <a href="${BUILD_URL}allure/">
-                            Open Allure Report
-                        </a>
-                    </p>
+        <p>
+            <a href="${BUILD_URL}allure/">
+                Open Allure Report
+            </a>
+        </p>
 
-                    <p>
-                        <a href="${BUILD_URL}Playwright_20Report/">
-                            Open Playwright Report
-                        </a>
-                    </p>
+        <p>
+            <a href="${BUILD_URL}Playwright_20Report/">
+                Open Playwright Report
+            </a>
+        </p>
 
-                    <br/>
-                    <p>Allure report ZIP is attached with this email.</p>
-
-                    <br/>
-                    <p>Regards,<br/>Jenkins CI/CD</p>
-                </body>
-                </html>
-                """,
-                attachmentsPattern: 'allure-report.zip',
-                attachLog: true
-            )
-        }
-    }
-}
+        <br/>
+        <p>Regards,<br/>Jenkins CI/CD</p>
+    </body>
+    </html>
+    """
+)
