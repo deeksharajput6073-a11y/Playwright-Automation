@@ -52,6 +52,32 @@ pipeline {
                 jdk: '',
                 results: [[path: 'allure-results']]
             ])
+
+            // Send Email
+            emailext(
+                to: 'deeksharajput6073@gmail.com',
+
+                subject: "Playwright Automation Report - Build #${BUILD_NUMBER}",
+
+                body: """
+Hello Team,
+
+Automation execution completed.
+
+Job Name: ${JOB_NAME}
+
+Build Number: ${BUILD_NUMBER}
+
+Build Status: ${currentBuild.currentResult}
+
+Build URL: ${BUILD_URL}
+
+Regards,
+Jenkins
+""",
+
+                mimeType: 'text/plain'
+            )
         }
     }
 }

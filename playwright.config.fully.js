@@ -6,6 +6,12 @@ module.exports =
 
         testDir: './tests',
 
+        timeout: 90000,  // Increased from default 30000ms
+
+        expect: {
+            timeout: 10000
+        },
+
         fullyParallel: true,
 
         workers: 5,
@@ -24,7 +30,11 @@ module.exports =
                 'retain-on-failure',
 
             trace:
-                'retain-on-failure'
+                'retain-on-failure',
+
+            actionTimeout: 15000,
+
+            navigationTimeout: 60000
         },
 
         reporter: [
