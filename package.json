@@ -31,7 +31,9 @@
     "partial1": "playwright test --project=launch --project=signup --project=signupdetails --project=login --project=remaining-tests --project=delete-account",
     "report": "allure generate allure-results --clean",
     "open-report": "allure open",
-    "report-ui": "allure generate allure-results --clean && allure open"
+    "report-ui": "allure generate allure-results --clean && allure open",
+    "api:qa": "cross-env TEST_ENV=qa playwright test api/tests",
+    "ui:qa": "cross-env TEST_ENV=qa playwright test tests"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",

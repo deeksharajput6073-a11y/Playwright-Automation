@@ -55,37 +55,85 @@ pipeline {
             ])
 
             script {
-                try {
 
-                    mail(
-                        to: 'deeksharajput6073@gmail.com',
-                        subject: "Playwright Automation Report - Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
-                        body: """
-Job Name: ${JOB_NAME}
+            // Default values
+            def total = 0
+            def passed = 0
+            def failed = 0
+            def skipped = 0
 
-Build Number: ${BUILD_NUMBER}
+            // Read Playwright JSON report
+            if (fileExists('playwright-report/results.json')) {
 
-Build Status: ${currentBuild.currentResult}
+                def report = readJSON file: 'playwright-report/results.json'
 
-Build URL:
+                report.suites.each { suite ->
+                    suite.specs.each { spec ->
+                        spec.tests.each { t ->
+
+                            total++
+
+                            if (t.status == "passed") {
+                                passed++
+                            }
+
+                            if (t.status == "failed") {
+                                failed++
+                            }
+
+                            if (t.status == "skipped") {
+                                skipped++
+                            }
+                        }
+                    }
+                }
+            }
+
+            try {
+
+                mail(
+                    to: 'deeksharajput6073@gmail.com',
+                    subject: "Playwright Automation Report - Build #${BUILD_NUMBER} - ${currentBuild.currentResult}",
+                    body: """
+
+Playwright Automation Execution Report
+
+==================================================
+
+Job Name       : ${JOB_NAME}
+Build Number   : ${BUILD_NUMBER}
+Build Status   : ${currentBuild.currentResult}
+
+=============== TEST SUMMARY ======================
+
+Total Tests    : ${total}
+Passed Tests   : ${passed}
+Failed Tests   : ${failed}
+Skipped Tests  : ${skipped}
+
+==================================================
+
+Build URL
 ${BUILD_URL}
 
-Allure Report:
+Allure Report
 ${BUILD_URL}allure/
 
-Playwright Report:
+Playwright Report
 ${BUILD_URL}Playwright_20Report/
 
 Regards,
 Jenkins CI/CD
+
 """
-                    )
+                )
 
-                    echo 'MAILER PLUGIN EMAIL SENT SUCCESSFULLY'
+                echo "MAIL SENT SUCCESSFULLY"
 
-                } catch (Exception e) {
-                    echo "MAILER PLUGIN EMAIL FAILED: ${e.getMessage()}"
-                }
+            } catch (Exception e) {
+
+                echo "MAIL FAILED: ${e.getMessage()}"
+
             }
         }
     }
